@@ -10,9 +10,6 @@ from app.exceptions import ValidationError
 from . import db, login_manager
 
 
-
-
-
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -99,12 +96,10 @@ class User(UserMixin, db.Model):
     def to_json(self):
         json_user = {
             'url': url_for('api.get_user', id=self.id),
-            'username': self.username,
             'firstname': self.firstname,
             'lastname': self.lastname,
             'registerd_since': self.registered_since,
-            'location':self.location,
-            'transactions_count': self.transactions.count()
+            'location':self.location
         }
         return json_user
 
