@@ -16,6 +16,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     MKOBO_USERS_PER_PAGE = 20
     MKOBO_TRANSACTIONS_PER_PAGE = 50
+    MKOBO_ACCOUNTS_PER_PAGE = 50
 
     @staticmethod
     def init_app(app):

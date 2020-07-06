@@ -19,8 +19,8 @@ class User(UserMixin, db.Model):
     firstname = db.Column(db.String(64))
     lastname = db.Column(db.String(64))
     location = db.Column(db.String(64))
-    account = db.relationship('Account', backref='user', lazy='dynamic')
-    transaction = db.relationship('Transaction', backref='user', lazy='dynamic')
+    accounts = db.relationship('Account', backref='user', lazy='dynamic')
+    transactions = db.relationship('Transaction', backref='user', lazy='dynamic')
     registered_since = db.Column(db.DateTime(), default=datetime.utcnow)
     
 
@@ -137,8 +137,8 @@ class Account(db.Model):
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow) 
 
     def to_json(self):
-        json_account = {
-            'url':url_for('api.get_account', id =self.id),
+        json_account ={
+            'url':url_for('api.get_user_account', id =self.id),
             'account_type': self.account_type,
             'balance': self.balance,
             'user_url':url_for('api.get_user', id=self.user_id),
@@ -157,7 +157,7 @@ class Transaction(db.Model):
 
     def to_json(self):
         json_transaction = {
-            'url':url_for('api.get_transaction', id =self.id),
+            'url':url_for('api.get_user_transactions', id =self.id),
             'user_url':url_for('api.get_user', id=self.user_id),
             'amount':self.amount,
             'description':self.description,
