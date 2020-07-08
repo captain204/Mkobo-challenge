@@ -1,6 +1,10 @@
-from flask import jsonify, request, current_app, url_for
+from flask import jsonify, request, g, current_app, url_for
+from .. import db
 from . import api
 from ..models import User, Account, Transaction
+from  app.api.http_status import HttpStatus
+
+
 
 
 
@@ -8,7 +12,7 @@ from ..models import User, Account, Transaction
 @api.route('/account', methods=['POST'])
 def create_account():
     account = Account.to_json(request.json)
-    post.user = g.current_user
+    account.user = g.current_user
     db.session.add(account)
     db.session.commit()
     return jsonify(account.to_json()), 201, \
@@ -17,22 +21,21 @@ def create_account():
 
 
 
-@api.route('/send', methods=['POST'])
+@api.route('/account/send', methods=['POST'])
 def send():
-    account = Account.query.filter_by(user_id=id).first()
-    if g.current_user == account.user: 
-        return forbidden('You cant send money to yourself')
     data = request.get_json()
-    balance = account.balance + data.amount
-    account.balance = balance
-    try:
-        account.update()
-        response = {'message':'Transfer successfull'}
-        return response, HttpStatus.ok_200.value
-    except SQLAlchemyError as e:
-        db.session.rollback()
-        response = {"error":str(e)}
-        return response, HttpStatus.bad_request_400.value
-
+    account = Account.query.filter_by(user_id=data['user_id']).first()
+    balance = account.balance + data['amount']
+    account.balance = balance    
+    transaction=Transaction(user_id=g.current_user, amount=data['amount'],
+                              description=data['description'],transaction_type='debit')
+    db.session.add(account)
+    db.session.add(transaction)
+    db.session.commit()
+    response = {'message':'Transfer successfull'}
+    return response, HttpStatus.ok_200.value
+    #return jsonify(account.balance)
+    
+    
         
 

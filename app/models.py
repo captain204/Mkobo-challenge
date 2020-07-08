@@ -157,8 +157,7 @@ class Transaction(db.Model):
 
     def to_json(self):
         json_transaction = {
-            'url':url_for('api.get_user_transactions', id =self.id),
-            'user_url':url_for('api.get_user', id=self.user_id),
+            'url':url_for('api.get_transactions'),
             'amount':self.amount,
             'description':self.description,
             'transaction_type':self.transaction_type,
