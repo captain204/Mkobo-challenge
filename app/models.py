@@ -133,6 +133,7 @@ class Account(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     account_type = db.Column(db.Text)
     balance = db.Column(db.Integer)
+    account_number = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow) 
 
