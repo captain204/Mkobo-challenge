@@ -28,13 +28,21 @@ def send():
     data = request.get_json()
     account_sender = Account.query.filter_by(user_id=g.current_user.id).first()
     response = {'message':'Insufficient funds'}
+    #Check balance
     if not account_sender.balance:
         return response, HttpStatus.bad_request_400.value
     sender_balance = account_sender.balance - data['amount']
-    account_sender.balance = sender_balance 
+    account_sender.balance = sender_balance
+    #Receiver check 
     account_receiver = Account.query.filter_by(user_id=data['user_id']).first()
+    response = {'message':'You cannot transfer money to yourself'}
+    if account_sender == account_receiver:
+            return response, HttpStatus.bad_request_400.value
+    
+    #Reconcilling account balance
     balance = account_receiver.balance + data['amount']
-    account_receiver.balance = balance    
+    account_receiver.balance = balance
+    
     transaction_sender=Transaction(user_id=g.current_user.id, amount=data['amount'],
                               description=data['description'],transaction_type='debit')
     transaction_receiver=Transaction(user_id=data['user_id'], amount=data['amount'],
